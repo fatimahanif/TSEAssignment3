@@ -11,6 +11,7 @@ var userSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,
@@ -18,11 +19,11 @@ var userSchema = new Schema({
   },
 });
 
-userSchema.methods.hashPassword = (password) => {
+userSchema.statics.hashPassword = (password) => {
   return bycrypt.hashSync(password, bycrypt.genSaltSync(10));
 };
 
-userSchema.methods.comparePassword = (password, hash) => {
+userSchema.statics.comparePassword = (password, hash) => {
   return bycrypt.compareSync(password, hash);
 };
 
