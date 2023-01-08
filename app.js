@@ -3,6 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var cors = require("cors");
 
 var mongoose = require("mongoose");
 
@@ -25,6 +26,13 @@ connection.then(
     console.log(err);
   }
 );
+
+//cors options
+var corsOptions = {
+  origin: "http://localhost:8080",
+};
+
+app.use(cors(corsOptions));
 
 // view engine setup
 app.set("views", path.join(__dirname, "app_server", "views"));

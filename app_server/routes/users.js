@@ -50,28 +50,16 @@ router.post("/signup", (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
-  User.findOne({ email: req.body.email })
-    .then(
-      (user) => {
-        if (user == null) {
-          res.statusCode = 404;
-          res.send("User not found");
-        } else if (!User.comparePassword(req.body.password, user.password)) {
-          res.statusCode = 401;
-          res.send("Incorrect email or password");
-        }
-        // console.log("User found");
-        // res.json(user);
-        return user;
-      },
-      (err) => {
-        console.log("Error in login");
-        res.statusCode = 400;
-        res.json("Please try again");
-      }
-    )
-    .then(
-      (user) => {
+  User.findOne({ email: req.body.email }).then(
+    (user) => {
+      if (user == null) {
+        res.statusCode = 404;
+        res.send("User not found");
+      } else if (!User.comparePassword(req.body.password, user.password)) {
+        res.statusCode = 401;
+        res.json("Incorrect email or password");
+      } else {
+        // return user;
         let token;
         try {
           token = jwt.sign({ _id: user._id, email: user.email }, secret_key, {
@@ -80,7 +68,7 @@ router.post("/login", (req, res, next) => {
         } catch (err) {
           console.log("Error in login");
           res.statusCode = 400;
-          res.json("Please try again");
+          res.json("Incorrect email or password");
         }
         res.statusCode = 200;
         res.json({
@@ -90,13 +78,22 @@ router.post("/login", (req, res, next) => {
             token: token,
           },
         });
-      },
-      (err) => {
-        console.log("Error in login");
-        res.statusCode = 400;
-        res.json("Please try again");
       }
-    );
+    },
+    (err) => {
+      console.log("Error in login");
+      res.statusCode = 400;
+      res.json("Please try again");
+    }
+  );
+  // .then(
+  //   (user) => {},
+  //   (err) => {
+  //     console.log("Error in login");
+  //     res.statusCode = 400;
+  //     res.json("Please try again");
+  //   }
+  // );
 });
 
 module.exports = router;
