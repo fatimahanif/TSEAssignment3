@@ -50,7 +50,7 @@ router.get("/:serviceID/products", function (req, res, next) {
 //find one product
 router.get("/products/:productID", function (req, res, next) {
   Product.findOne({ _id: req.params.productID })
-    // .populate("service")
+    .populate("service")
     .exec(function (err, product) {
       if (err) {
         return next(err);
