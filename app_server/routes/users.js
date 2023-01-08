@@ -24,9 +24,13 @@ router.post("/signup", (req, res, next) => {
       console.log("User created with id", user._id);
       let token;
       try {
-        token = jwt.sign({ _id: user._id, email: user.email }, secret_key, {
-          expiresIn: "5h",
-        });
+        token = jwt.sign(
+          { _id: user._id, name: user.name, email: user.email },
+          secret_key,
+          {
+            expiresIn: "5h",
+          }
+        );
       } catch (err) {
         console.log("Error in login");
         res.statusCode = 400;
@@ -62,9 +66,13 @@ router.post("/login", (req, res, next) => {
         // return user;
         let token;
         try {
-          token = jwt.sign({ _id: user._id, email: user.email }, secret_key, {
-            expiresIn: "5h",
-          });
+          token = jwt.sign(
+            { _id: user._id, name: user.name, email: user.email },
+            secret_key,
+            {
+              expiresIn: "5h",
+            }
+          );
         } catch (err) {
           console.log("Error in login");
           res.statusCode = 400;
@@ -94,6 +102,22 @@ router.post("/login", (req, res, next) => {
   //     res.json("Please try again");
   //   }
   // );
+});
+
+router.get("/profile", (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  //Authorization: 'Bearer TOKEN'
+  if (!token) {
+    res
+      .status(200)
+      .json({ success: false, message: "Error! Token was not provided." });
+  }
+  //Decoding the token
+  const decodedToken = jwt.verify(token, secret_key);
+  res.status(200).json({
+    success: true,
+    user: { name: decodedToken.name, email: decodedToken.email },
+  });
 });
 
 module.exports = router;
